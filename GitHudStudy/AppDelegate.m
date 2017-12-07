@@ -16,10 +16,51 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    if (@available(iOS 11.0, *)) {
+        [UIScrollView appearance].contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        // Fallback on earlier versions
+    }
+    
+    [self addMainView];
+    //启动页
+    [self loadLanchView];
+    
     return YES;
 }
 
+#pragma mark - 加载根控制器
+- (void)addMainView{
+
+    // 是不是已经登录
+    BOOL isLogIn = [[SetupTools sharedInstance]isInLogIn];
+    
+    if (isLogIn) {
+    // 打开数据库读取用户信息
+    }
+    
+    self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.backgroundColor = [UIColor whiteColor];
+    
+    self.window.rootViewController = [[SetupTools sharedInstance]chooseRootViewController];
+    
+    [self.window makeKeyAndVisible];
+}
+
+#pragma mark -  加载启动页
+- (void)loadLanchView{
+    
+    LanchModel *adModel = [[LanchModel alloc]init];
+    adModel.adImgUrl = @"http://d.hiphotos.baidu.com/image/pic/item/f7246b600c3387444834846f580fd9f9d72aa034.jpg";
+    adModel.adContentUrl = @"http://www.baidu.com";
+    LanchViewManger *lvc = [LanchViewManger lanchViewController];
+    lvc.adModel = adModel;
+    
+    //获取窗口的根视图
+    UIViewController *vc = [self.window rootViewController];
+    //把启动页加载到根视图上
+    [lvc showLanchViewToView:vc.view];
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
